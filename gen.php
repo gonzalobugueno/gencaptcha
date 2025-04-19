@@ -67,6 +67,8 @@ for ($i = 2; $i < $argc; $i++) {
     }
 }
 
+assert_options(ASSERT_ACTIVE, 1);
+assert_options(ASSERT_EXCEPTION, 1);
 
 use Gregwar\Captcha\AnnotatedCaptchaBuilder;
 
