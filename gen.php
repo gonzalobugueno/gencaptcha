@@ -19,14 +19,7 @@ $test = 0.1;
 $w = 150;
 $h = 40;
 
-if ($argc < 2) {
-    echo "Usage: php script.php <length> [--destdir] [--fmt] [--train] [--val] [--test]\n";
-    exit(1);
-}
-
-$length = $argv[1];
-
-if (!is_numeric($length) || $length <= 0) {
+function help() {
     echo "Usage: php gen.php <length> [options]\n";
     echo "  <length>      Required: Number of samples (must be a positive number)\n";
     echo "  --destdir     Optional: The destination directory (default: 'dataset')\n";
@@ -38,6 +31,12 @@ if (!is_numeric($length) || $length <= 0) {
     echo "  -h            Optional: Image height (default: 40)\n";
     exit(1);
 }
+
+if ($argc < 2) help();
+
+$length = $argv[1];
+
+if (!is_numeric($length) || $length <= 0) help();
 
 for ($i = 2; $i < $argc; $i++) {
     switch ($argv[$i]) {
