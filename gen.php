@@ -34,6 +34,8 @@ if (!is_numeric($length) || $length <= 0) {
     echo "  --train       Optional: The train split ratio (default: 0.7)\n";
     echo "  --val         Optional: The validation split ratio (default: 0.2)\n";
     echo "  --test        Optional: The test split ratio (default: 0.1)\n";
+    echo "  -w            Optional: Image width (default: 150)\n";
+    echo "  -h            Optional: Image height (default: 40)\n";
     exit(1);
 }
 
