@@ -78,7 +78,7 @@ $captcha
 
 for ($i = 0; $i < $length; ++$i) {
     $captcha
-        ->build()
+        ->build($w, $h)
         ->saveAsYoloFmt($destdir, $fmt, $train, $val, $test);
 }
 
