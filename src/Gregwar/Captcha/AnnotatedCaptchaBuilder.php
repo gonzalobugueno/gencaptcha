@@ -3,6 +3,8 @@
 namespace Gregwar\Captcha;
 
 use \Exception;
+use \InvalidArgumentException;
+use \RuntimeException;
 
 class AnnotatedCaptchaBuilder extends CaptchaBuilder
 {
@@ -24,7 +26,10 @@ class AnnotatedCaptchaBuilder extends CaptchaBuilder
     }
 
     private function checkStructure($dir) {
-        assert(is_dir($dir) || mkdir($dir, 0777, true), "unable to make structure");
+        if (!is_dir($dir)) {
+            if (!mkdir($dir, 0777, true))
+                throw new Exception("Unable to create directory structure: $dir");
+        }
     }
 
 
@@ -61,9 +66,15 @@ class AnnotatedCaptchaBuilder extends CaptchaBuilder
 
     public function saveAsYoloFmt($destdir = 'dataset', $fmt = 'png', $train = 0.7, $val = 0.2, $test = 0.1) {
 
-        assert(abs($train+$val+$test-1) < PHP_FLOAT_EPSILON, "illegal argument: weights must sum up to 1");
-        assert(function_exists("image$fmt"), "illegal argument: fmt");
-        assert(count($this->labels), "illegal state: build must be called first");
+        if (abs($train + $val + $test - 1) >= PHP_FLOAT_EPSILON)
+            throw new InvalidArgumentException("weights must sum up to 1");
+
+        if (!function_exists("image$fmt"))
+            throw new InvalidArgumentException("function image$fmt doesnt exist");
+
+        if (count($this->labels) === 0)
+            throw new RuntimeException("Illegal state: build must be called first");
+
 
         $rand = mt_rand() / mt_getrandmax();
 
@@ -78,10 +89,13 @@ class AnnotatedCaptchaBuilder extends CaptchaBuilder
         $this->checkStructure("$destdir/labels/$dest");
 
         $imgok = "image$fmt"($this->contents, "$destdir/images/$dest/{$this->counter}.$fmt");
-        assert($imgok, "cant create $fmt");
+        if (!$imgok)
+            throw new RuntimeException("Can't create image $destdir/images/$dest/{$this->counter}.$fmt");
 
         $f = fopen("$destdir/labels/$dest/{$this->counter}.txt", 'w');
-        assert($f, "cant create file label");
+
+        if (!$f)
+            throw new RuntimeException("Can't create label $destdir/labels/$dest/{$this->counter}.txt");
 
         foreach ($this->labels as $lp) {
             $normCx = $lp->scx / $this->width;
